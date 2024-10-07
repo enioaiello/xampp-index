@@ -15,13 +15,16 @@
         }
 
         body {
-            width: 80%;
+            width: 95%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
         }
 
-        body h1 {
+        #projects h1 {
             margin: 2vh 0;
-            text-align: center;
+            text-align: left;
         }
 
         .button {
@@ -115,6 +118,34 @@
             margin-top: 20px;
         }
 
+        #links {
+            display: inline-flex;
+            position: fixed;
+            right: 5vw;
+            padding: 0.5%;
+            width: 7.5vw;
+            height: auto;
+            top: 50%;
+            transform: translateY(-50%);
+            align-items: center;
+            list-style: none;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        #links li {
+            width: 100%;
+        }
+
+        #links:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        #links li img {
+            width: 100%;
+        }
+
         @media (prefers-color-scheme: dark) {
             ::selection {
                 background-color: #ffffff;
@@ -141,46 +172,50 @@
         }
     </style>
 </head>
-<body>
+    <div id="projects">
+        <h1>Projets</h1>
+        <div class="articleContain">
+            <?php
+            // Spécifie le chemin racine (le dossier htdocs ou un autre chemin spécifique)
+            $root = __DIR__;
 
-<h1>Projets</h1>
-<div class="articleContain">
-    <?php
-    // Spécifie le chemin racine (le dossier htdocs ou un autre chemin spécifique)
-    $root = __DIR__;
+            // Variable pour compter les projets
+            $projectCount = 0;
 
-    // Variable pour compter les projets
-    $projectCount = 0;
+            // Parcourt tous les éléments du dossier racine
+            foreach (new DirectoryIterator($root) as $fileInfo) {
+                // Vérifie si c'est un dossier (et ignore les . et ..)
+                if ($fileInfo->isDir() && !$fileInfo->isDot()) {
+                    // Crée le lien vers le dossier
+                    $folderName = $fileInfo->getFilename();
+                    $folderUrl = './' . urlencode($folderName);
+                    $folderBanner = file_exists("./" . urlencode($folderName) . "/assets/img/banner.png") ? "./" . urlencode($folderName) . "/assets/img/banner.png" : 'https://images.crazygames.com/games/chrome-dino/cover-1669113832091.png?auto=format,compress&q=75&cs=strip';
 
-    // Parcourt tous les éléments du dossier racine
-    foreach (new DirectoryIterator($root) as $fileInfo) {
-        // Vérifie si c'est un dossier (et ignore les . et ..)
-        if ($fileInfo->isDir() && !$fileInfo->isDot()) {
-            // Crée le lien vers le dossier
-            $folderName = $fileInfo->getFilename();
-            $folderUrl = './' . urlencode($folderName);
-            $folderBanner = file_exists("./" . urlencode($folderName) . "/assets/img/banner.png") ? "./" . urlencode($folderName) . "/assets/img/banner.png" : 'https://images.crazygames.com/games/chrome-dino/cover-1669113832091.png?auto=format,compress&q=75&cs=strip';
+                    // Affiche chaque dossier dans un <article> à l'intérieur de la div .articleContain
+                    echo '<article>';
+                    echo '<div class="banner" style="background-image: url(' . htmlspecialchars($folderBanner) . ');"></div>';
+                    echo '<h2>' . htmlspecialchars($folderName) . '</h2>';
+                    echo '<p>Répétoire : ' . htmlspecialchars($folderName) . '</p>';
+                    // Ajout d'un lien (bouton) vers le projet
+                    echo '<a class="button" href="' . htmlspecialchars($folderUrl) . '">Ouvrir le projet</a>';
+                    echo '</article>';
 
-            // Affiche chaque dossier dans un <article> à l'intérieur de la div .articleContain
-            echo '<article>';
-            echo '<div class="banner" style="background-image: url(' . htmlspecialchars($folderBanner) . ');"></div>';
-            echo '<h2>' . htmlspecialchars($folderName) . '</h2>';
-            echo '<p>Répétoire : ' . htmlspecialchars($folderName) . '</p>';
-            // Ajout d'un lien (bouton) vers le projet
-            echo '<a class="button" href="' . htmlspecialchars($folderUrl) . '">Ouvrir le projet</a>';
-            echo '</article>';
+                    // Incrémenter le compteur de projets
+                    $projectCount++;
+                }
+            }
 
-            // Incrémenter le compteur de projets
-            $projectCount++;
-        }
-    }
-
-    // Si aucun projet n'a été trouvé
-    if ($projectCount === 0) {
-        echo '<p class="no-projects">Aucun projet n\'a été détecté.</p>';
-    }
-    ?>
-</div>
-
+            // Si aucun projet n'a été trouvé
+            if ($projectCount === 0) {
+                echo '<p class="no-projects">Aucun projet n\'a été détecté.</p>';
+            }
+            ?>
+        </div>
+    </div>
+    <ul id="links">
+        <li>
+            <a href="http://localhost/phpmyadmin"><img src="https://www.softaculous.com/images//ampps/appimages/phpmyadmin.png" alt="PhpMyAdmin" title="Accéder à PhpMyAdmin"></a>
+        </li>
+    </ul>
 </body>
 </html>
